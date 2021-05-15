@@ -12,10 +12,21 @@ const Login = (props) => {
   const [formIsValid, setFormIsValid] = useState(false);
 
   useEffect(()=>{
-    setFormIsValid(
-      enteredEmail.includes('@') && enteredPassword.trim().length > 6
-    );
-  }, [enteredEmail, enteredPassword]) // React render if one of the dependencies changes
+    // Avoid multiple calls
+    const identifier = setTimeout(() => {
+      console.log('Checking from validity');
+      setFormIsValid(
+        enteredEmail.includes('@') && enteredPassword.trim().length > 6
+      );
+    }, 500);
+
+    // This function executes after the first component changes
+    return () => {
+      console.log('CLEANUP');
+      clearTimeout(identifier);
+    }
+
+  }, [enteredEmail, enteredPassword])
 
   const emailChangeHandler = (event) => {
     setEnteredEmail(event.target.value);
